@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: service-a
+  name: service-a
+  namespace: flask-microservices-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-a
+  template:
+    metadata:
+      labels:
+        app: service-a
+    spec:
+      containers:
+      - image: esat1234/multiple-services-demo-with-flask-service-a
+        name: service-a
+        ports:
+        - containerPort: 5000
+          name: service-a
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-a
+  name: service-a
+  namespace: flask-microservices-demo
+spec:
+  type: NodePort
+  ports:
+  - name: "service-a-service"
+    port: 5000
+    targetPort: 5000
+    nodePort: 31000
+  selector:
+    app: service-a
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: service-b
+  name: service-b
+  namespace: flask-microservices-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-b
+  template:
+    metadata:
+      labels:
+        app: service-b
+    spec:
+      containers:
+      - image: esat1234/multiple-services-demo-with-flask-service-b
+        name: service-b
+        ports:
+        - containerPort: 5000
+          name: service-b
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-b
+  name: service-b
+  namespace: flask-microservices-demo
+spec:
+  type: NodePort
+  ports:
+  - name: "service-b-service"
+    port: 5000
+    targetPort: 5000
+    nodePort: 31001
+  selector:
+    app: service-b
